@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function renderText(text) {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = text;
+      document.body.appendChild(paragraph);
+    }
+
+    class Delayer {
+      delay(miliseconds) {
+        // Already a timer running? Cancel the bad boy!
+        if (this.timeoutId) {
+          this.cancel();
+        }
+
+        return new Promise((resolve, reject) => {
+          this.timeoutId = setTimeout(() => {
+            renderText(`Ik ben timer ${this.timeoutId} en ben nu klaar!`);
+            this.timeoutId = null;
+            resolve();
+          }, miliseconds);
+        });
+      }
+
+      cancel() {
+        renderText(`Ik ga nu timer ${this.timeoutId} annuleren`);
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+      }
+    }
+
+    async function client() {
+      const delayManager = new Delayer();
+      renderText(`Ik ga nu een timer starten van 5 seconden.`);
+      await delayManager.delay(5000);
+
+      renderText(`Ik ga nu nog een timer starten van 5 seconden, zonder er op te wachten.`);
+      const delayPromise = delayManager.delay(5000);
+      renderText(`Doe maar niet. Ik annuleer hem.`);
+      delayManager.cancel();
+      console.log('In ')
+
+
+      // Even een direct timeout om te laten zien dat er geen timer nog bezig is.
+      setTimeout(() => {
+        // Ander leuk voorbeeld
+        renderText('Volgende voorbeeld: ik ga nu heel veel delays aanroepen, zonder op te wachten. Dit resulteert uiteindelijk maar in 1 delay.');
+        delayManager.delay(1000);
+        delayManager.delay(1000);
+        delayManager.delay(1000);
+        delayManager.delay(1000);
+        delayManager.delay(1000);
+        delayManager.delay(1000);
+      }, 5000)
+    }
+    client();
+  </script>
+</body>
+</html>
